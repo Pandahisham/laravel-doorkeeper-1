@@ -7,7 +7,7 @@ This package counts the amount of records on a relationship and compares them wi
 ## Installation
 
 ```js
-composer require tshafer/laravel-doorkeeper:1.0.*@dev
+composer require tshafer/laravel-doorkeeper
 ```
 
 ## Example
