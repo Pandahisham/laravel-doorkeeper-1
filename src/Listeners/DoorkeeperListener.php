@@ -1,12 +1,11 @@
 <?php
 
-    namespace Tshafer\Doorkeeper\Listeners;
+namespace Tshafer\Doorkeeper\Listeners;
 
-    use Tshafer\Doorkeeper\Contracts\ListenerContract;
+use Tshafer\Doorkeeper\Contracts\ListenerContract;
 
     class DoorkeeperListener implements ListenerContract
     {
-
         /**
          * Compare the amount of the relations with the limitation.
          *
@@ -14,13 +13,13 @@
          *
          * @return mixed
          */
-        public function compare( $model )
+        public function compare($model)
         {
             // Flush session before each check
-            $session = session()->get( null );
+            $session = session()->get(null);
             foreach ($session as $key => $value) {
-                if (starts_with( $key, 'doorkeeper_' )) {
-                    session()->forget( $key );
+                if (starts_with($key, 'doorkeeper_')) {
+                    session()->forget($key);
                 }
             }
 
@@ -35,7 +34,7 @@
             // Check each relation and limitation
             $overallCount = 0;
             foreach ($limits as $relation => $limit) {
-                if ( ! $model->$relation) {
+                if (!$model->$relation) {
                     continue;
                 }
 
@@ -43,16 +42,16 @@
                 $overallCount += $relationCount;
 
                 if ($relationCount >= $limit) {
-                    session()->put( 'doorkeeper_reached_' . $relation, true );
+                    session()->put('doorkeeper_reached_'.$relation, true);
                 }
 
-                session()->put( 'doorkeeper_count_' . $relation, $relationCount );
+                session()->put('doorkeeper_count_'.$relation, $relationCount);
             }
             // Check if the overall limit has been reached
             if ($overallCount >= $limits->sum()) {
-                session()->put( 'doorkeeper_reached_maximum', true );
+                session()->put('doorkeeper_reached_maximum', true);
             }
 
-            session()->put( 'doorkeeper_overall_count', $overallCount );
+            session()->put('doorkeeper_overall_count', $overallCount);
         }
     }

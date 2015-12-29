@@ -1,38 +1,35 @@
 <?php
 
-    namespace Tshafer\Doorkeeper\Traits;
+namespace Tshafer\Doorkeeper\Traits;
 
-    use Tshafer\Doorkeeper\Listeners\DoorkeeperListener;
+use Tshafer\Doorkeeper\Listeners\DoorkeeperListener;
 
     /**
-     * Class Doorkeeper
-     *
-     * @package Tshafer\Doorkeeper\Traits
+     * Class Doorkeeper.
      */
     trait Doorkeeper
     {
-
         /**
          * Boot the trait.
          */
         public static function bootDoorkeeper()
         {
-            static::loaded( DoorkeeperListener::class . '@compare' );
+            static::loaded(DoorkeeperListener::class.'@compare');
         }
 
         /**
          * {@inheritdoc}
          */
-        public function newFromBuilder( $attributes = [ ] )
+        public function newFromBuilder($attributes = [])
         {
-            $instance = parent::newFromBuilder( $attributes );
+            $instance = parent::newFromBuilder($attributes);
 
-            if (empty( $instance->limitations )) {
+            if (empty($instance->limitations)) {
                 return $instance;
             }
 
-            $instance->limitations = collect( $this->limitations );
-            $instance->fireModelEvent( 'loaded' );
+            $instance->limitations = collect($this->limitations);
+            $instance->fireModelEvent('loaded');
 
             return $instance;
         }
@@ -43,9 +40,9 @@
          * @param string $callback
          * @param int    $priority
          */
-        public static function loaded( $callback, $priority = 0 )
+        public static function loaded($callback, $priority = 0)
         {
-            static::registerModelEvent( 'loaded', $callback, $priority );
+            static::registerModelEvent('loaded', $callback, $priority);
         }
 
         /**
@@ -55,13 +52,13 @@
          *
          * @return bool
          */
-        public function maxed( $key = null )
+        public function maxed($key = null)
         {
             if ($key !== null) {
-                return session()->has( 'doorkeeper_reached_' . $key );
+                return session()->has('doorkeeper_reached_'.$key);
             }
 
-            return session()->has( 'doorkeeper_reached_maximum' );
+            return session()->has('doorkeeper_reached_maximum');
         }
 
         /**
@@ -71,13 +68,13 @@
          *
          * @return int
          */
-        public function current( $key = null )
+        public function current($key = null)
         {
             if ($key !== null) {
-                return session()->get( 'doorkeeper_count_' . $key );
+                return session()->get('doorkeeper_count_'.$key);
             }
 
-            return session()->get( 'doorkeeper_overall_count' );
+            return session()->get('doorkeeper_overall_count');
         }
 
         /**
@@ -87,10 +84,10 @@
          *
          * @return int
          */
-        public function allowed( $key = null )
+        public function allowed($key = null)
         {
             if ($key !== null) {
-                return $this->limitations->get( $key );
+                return $this->limitations->get($key);
             }
 
             return $this->limitations->sum();
@@ -103,12 +100,12 @@
          *
          * @return $this
          */
-        public function limits( array $limits )
+        public function limits(array $limits)
         {
-            $this->limitations = collect( $limits );
+            $this->limitations = collect($limits);
 
             $listener = new DoorkeeperListener();
-            $listener->compare( $this );
+            $listener->compare($this);
 
             return $this;
         }
@@ -118,9 +115,9 @@
          *
          * @return bool
          */
-        public function passes( $key = null )
+        public function passes($key = null)
         {
-            return ! $this->maxed( $key );
+            return !$this->maxed($key);
         }
 
         /**
@@ -128,8 +125,8 @@
          *
          * @return bool
          */
-        public function fails( $key = null )
+        public function fails($key = null)
         {
-            return $this->maxed( $key );
+            return $this->maxed($key);
         }
     }
